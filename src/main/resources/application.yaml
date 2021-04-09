@@ -1,0 +1,13 @@
+server.port: 8090
+spring:
+ datasource: 
+ 
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/gestionBiblioP7
+  username: postgres
+  password: floDU1716
+ jpa:
+  hibernate:
+   ddl-auto: create # When you launch the application for the first time - switch "none" at "create"
+   spring:
+  show-sql: true
