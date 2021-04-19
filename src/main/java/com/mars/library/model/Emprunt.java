@@ -1,16 +1,15 @@
 package com.mars.library.model;
 
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 
 @Entity
+@SequenceGenerator(name = "emprunt_seq", sequenceName = "emprunt_seq", allocationSize = 1)
 public class Emprunt {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "emprunt_seq")
 private int id; 
 
 private Date dateRenduPrevu;

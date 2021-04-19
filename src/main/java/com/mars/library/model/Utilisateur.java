@@ -1,60 +1,58 @@
 package com.mars.library.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 
 @Entity
+@SequenceGenerator(name = "utilisateur_seq", sequenceName = "utilisateur_seq", allocationSize = 1)
 public class Utilisateur {
 
-	@Id
-private int id; 
-	
-	private String nom;
-	
-	private String login; 
-	
-	private String MotDePasse;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "utilisateur_seq")
+    private int id;
 
-	@OneToMany
-	private List<Emprunt> emprunts;
-	
-	
-	public int getId() {
-		return id;
-	}
+    private String nom;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    private String email;
 
-	public String getNom() {
-		return nom;
-	}
+    private String MotDePasse;
 
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
+    @OneToMany
+    private List<Emprunt> emprunts;
 
-	public String getLogin() {
-		return login;
-	}
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getMotDePasse() {
-		return MotDePasse;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setMotDePasse(String motDePasse) {
-		MotDePasse = motDePasse;
-	}
-	
-	
-	
-	
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMotDePasse() {
+        return MotDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        MotDePasse = motDePasse;
+    }
+
+
 }

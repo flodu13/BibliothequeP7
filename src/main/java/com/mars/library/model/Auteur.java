@@ -1,18 +1,18 @@
 package com.mars.library.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@SequenceGenerator(name = "auteur_seq", sequenceName = "auteur_seq", allocationSize = 1)
 public class Auteur {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "auteur_seq")
     private int id;
     private String nom;
     private String premon;
-@OneToMany
+    @OneToMany
     private List<Ouvrage> ouvrages;
 
     public int getId() {
