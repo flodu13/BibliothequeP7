@@ -1,12 +1,17 @@
 package com.mars.library.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 @Entity
 @SequenceGenerator(name = "utilisateur_seq", sequenceName = "utilisateur_seq", allocationSize = 1)
-public class Utilisateur {
+public class Utilisateur implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "utilisateur_seq")
@@ -16,7 +21,7 @@ public class Utilisateur {
 
     private String email;
 
-    private String MotDePasse;
+    private String motDePasse;
 
     @OneToMany
     private List<Emprunt> emprunts;
@@ -47,12 +52,46 @@ public class Utilisateur {
     }
 
     public String getMotDePasse() {
-        return MotDePasse;
+        return motDePasse;
     }
 
     public void setMotDePasse(String motDePasse) {
-        MotDePasse = motDePasse;
+        this.motDePasse = motDePasse;
     }
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public String getPassword() {
+        return motDePasse;
+    }
+
+    @Override
+    public String getUsername() {
+        return nom;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

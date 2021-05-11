@@ -36,12 +36,21 @@ private Boolean prolongPret;
 		this.ouvrage = ouvrage;
 	}
 
+	public void setOuvragePk(Integer ouvrageId) {this.ouvrage = new Ouvrage();
+	this.ouvrage.setId(ouvrageId);
+	}
+
+
 	public Utilisateur getUtilisateur() {
 		return utilisateur;
 	}
 
 	public void setUtilisateur(Utilisateur utilisateur) {
 		this.utilisateur = utilisateur;
+	}
+
+	public void setUtilisateurPk (Integer utilisateurId) {this.utilisateur = new Utilisateur();
+	this.utilisateur.setId(utilisateurId);
 	}
 
 	public Date getDateRenduPrevu() {
