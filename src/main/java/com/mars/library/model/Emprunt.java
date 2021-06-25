@@ -49,9 +49,6 @@ private Boolean prolongPret;
 		this.utilisateur = utilisateur;
 	}
 
-	public void setUtilisateurPk (Integer utilisateurId) {this.utilisateur = new Utilisateur();
-	this.utilisateur.setId(utilisateurId);
-	}
 
 	public Date getDateRenduPrevu() {
 		return dateRenduPrevu;

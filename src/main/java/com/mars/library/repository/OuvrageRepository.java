@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OuvrageRepository extends JpaRepository<Ouvrage, Long> {
+public interface OuvrageRepository extends JpaRepository<Ouvrage, Integer> {
 
     List<Ouvrage> findAllByNombreExemplaireGreaterThan(int nbExemplaireMini);
 

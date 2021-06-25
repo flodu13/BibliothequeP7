@@ -2,28 +2,32 @@ package com.mars.library.controller;
 
 
 import com.mars.library.business.EmpruntService;
+import com.mars.library.controller.dto.EmpruntDto;
+import com.mars.library.controller.dto.EmpruntOuvrageDto;
 import com.mars.library.controller.dto.OuvrageUtilisateurDto;
+import com.mars.library.controller.dto.mapper.EmpruntDtoMapper;
 import com.mars.library.model.Utilisateur;
-import com.mars.library.repository.EmpruntRepository;
 import com.mars.library.model.Emprunt;
 import javassist.NotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/emprunt")
 public class EmpruntController {
 
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     private EmpruntService empruntService;
@@ -35,29 +39,60 @@ public class EmpruntController {
     }
 
     @GetMapping("/utilisateur")
-    public List<Emprunt> empruntUtilisateurConnecte(Principal principal) {
+    public List<EmpruntOuvrageDto> empruntUtilisateurConnecte(Principal principal) {
         Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-      return empruntService.empruntParUtilisateur(utilisateurConnecte.getId());
+        List<EmpruntOuvrageDto> empruntDtos = new ArrayList<>();
+        for (Emprunt emprunt : empruntService.empruntParUtilisateur(utilisateurConnecte.getId())) {
+            empruntDtos.add(EmpruntDtoMapper.dtoWithOuvrage(emprunt, modelMapper));
+        }
+      return empruntDtos;
     }
 
     @PostMapping()
-    public Emprunt creation(@RequestBody OuvrageUtilisateurDto ouvrageUtilisateurDto) {
-
-        return empruntService.creation(ouvrageUtilisateurDto);
+    public EmpruntDto creation(Principal principal, @RequestBody OuvrageUtilisateurDto ouvrageUtilisateurDto) {
+        Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        Emprunt emprunt = empruntService.creation(ouvrageUtilisateurDto, utilisateurConnecte);
+        return EmpruntDtoMapper.dto(emprunt);
     }
 
     @PostMapping ("/{empruntId}/prolongation")
-    public ResponseEntity<Emprunt> miseAJourDateRenduPrevu(@PathVariable Integer empruntId) {
-
+    public ResponseEntity<Void> miseAJourDateRenduPrevu(@PathVariable Integer empruntId, Principal principal) {
+        Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        if (utilisateurConnecte.getAdmin()) {
+            utilisateurConnecte=null;
+        }
         try {
-            return ResponseEntity.ok(empruntService.miseAJourDateRenduPrevu(empruntId));
+            empruntService.miseAJourDateRenduPrevu(empruntId, utilisateurConnecte);
+            return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
-        } catch (NotFoundException e) {
+        }
+        catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).build();
+        }
+        catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
 
         }
     }
+    @PostMapping("/{empruntId}/rendre")
+public ResponseEntity<Void> rendre (@PathVariable Integer empruntId, Principal principal) {
+        Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        if (utilisateurConnecte.getAdmin()) {
+            utilisateurConnecte=null;
+        }
+        try {
+            empruntService.rendre (empruntId, utilisateurConnecte);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).build();
+        }
+        catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
 
-
-}
+        }
+        }
+    }

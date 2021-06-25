@@ -23,9 +23,18 @@ public class Utilisateur implements UserDetails {
 
     private String motDePasse;
 
+    private Boolean isAdmin=false;
+
     @OneToMany
     private List<Emprunt> emprunts;
 
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
 
     public int getId() {
         return id;
