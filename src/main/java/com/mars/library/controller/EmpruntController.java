@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -45,7 +46,13 @@ public class EmpruntController {
         for (Emprunt emprunt : empruntService.empruntParUtilisateur(utilisateurConnecte.getId())) {
             empruntDtos.add(EmpruntDtoMapper.dtoWithOuvrage(emprunt, modelMapper));
         }
-      return empruntDtos;
+        // TODO a supprimer
+        try {
+            empruntService.livreEnretard();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return empruntDtos;
     }
 
     @PostMapping()
@@ -55,14 +62,14 @@ public class EmpruntController {
         return EmpruntDtoMapper.dto(emprunt);
     }
 
-    @PostMapping ("/{empruntId}/prolongation")
-    public ResponseEntity<Void> miseAJourDateRenduPrevu(@PathVariable Integer empruntId, Principal principal) {
+    @PostMapping ("/prolongation")
+    public ResponseEntity<Void> miseAJourDateRenduPrevu(@RequestBody EmpruntDto emprunt, Principal principal) {
         Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
         if (utilisateurConnecte.getAdmin()) {
             utilisateurConnecte=null;
         }
         try {
-            empruntService.miseAJourDateRenduPrevu(empruntId, utilisateurConnecte);
+            empruntService.miseAJourDateRenduPrevu(emprunt.getId(), utilisateurConnecte);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();

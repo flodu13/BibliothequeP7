@@ -16,6 +16,7 @@ public class EmpruntDtoMapper {
         dto.setRendu(emprunt.getRendu());
         dto.setOuvrageID(emprunt.getOuvrage().getId());
         dto.setUtilisateurId(emprunt.getUtilisateur().getId());
+        dto.setProlongPret(emprunt.getProlongPret());
         return  dto;
     }
 
@@ -25,6 +26,7 @@ public class EmpruntDtoMapper {
         dto.setId(emprunt.getId());
         dto.setDateRenduPrevu(emprunt.getDateRenduPrevu());
         dto.setRendu(emprunt.getRendu());
+        dto.setProlongPret(emprunt.getProlongPret());
         dto.setOuvrage(modelMapper.map(emprunt.getOuvrage(), OuvrageDto.class));
         dto.setUtilisateurId(emprunt.getUtilisateur().getId());
         return  dto;

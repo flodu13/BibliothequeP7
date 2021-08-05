@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -25,9 +26,16 @@ public class OuvrageController {
 
     @GetMapping
 
-    public List<OuvrageDto> afficherLivreDispo() {
+    public List<OuvrageDto> afficherLivreDispo(@RequestParam(required = false) String search) {
 
-        List<Ouvrage> ouvrages = ouvrageService.afficherLivreDispo();
+        List<Ouvrage> ouvrages;
+        if (search==null)
+        {
+            ouvrages= ouvrageService.afficherLivreDispo();
+        } else {
+            ouvrages=ouvrageService.findAllBySearch(search);
+        }
+
         List<OuvrageDto> ouvrageDto = new ArrayList<OuvrageDto>();
         for (Ouvrage ouvrage: ouvrages) {
             ouvrageDto.add(modelMapper.map(ouvrage, OuvrageDto.class));

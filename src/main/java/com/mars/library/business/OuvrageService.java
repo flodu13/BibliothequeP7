@@ -17,4 +17,9 @@ public class OuvrageService {
 
         return ouvrageRepository.findAllByNombreExemplaireGreaterThan(0);
     }
+
+    public List<Ouvrage> findAllBySearch(String search) {
+        String search2="%"+search+"%";
+        return ouvrageRepository.findAllByTitreLikeOrMaisonEditionLikeOrAuteur_NomLike(search2, search2, search2);
+    }
 }

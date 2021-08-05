@@ -17,6 +17,16 @@ public class EmpruntDto {
     private int ouvrageID;
     private int utilisateurId;
 
+    private Boolean prolongPret;
+
+    public Boolean getProlongPret() {
+        return prolongPret;
+    }
+
+    public void setProlongPret(Boolean prolongPret) {
+        this.prolongPret = prolongPret;
+    }
+
     public int getOuvrageID() {
         return ouvrageID;
     }
