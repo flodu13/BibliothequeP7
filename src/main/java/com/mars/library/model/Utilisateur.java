@@ -14,7 +14,7 @@ import java.util.List;
 public class Utilisateur implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "utilisateur_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "utilisateur_seq")
     private int id;
 
     private String nom;
@@ -23,7 +23,7 @@ public class Utilisateur implements UserDetails {
 
     private String motDePasse;
 
-    private Boolean isAdmin=false;
+    private Boolean isAdmin = false;
 
     @OneToMany
     private List<Emprunt> emprunts;
@@ -102,5 +102,16 @@ public class Utilisateur implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Utilisateur)) {
+            return false;
+        }
+        return ((Utilisateur)obj).getId()==this.id;
     }
 }

@@ -1,6 +1,8 @@
 package com.mars.library.business;
 
+import com.mars.library.controller.dto.LivreEnRetardDto;
 import com.mars.library.controller.dto.OuvrageUtilisateurDto;
+import com.mars.library.controller.dto.UtilisateurEnRetardDto;
 import com.mars.library.model.Emprunt;
 import com.mars.library.model.Ouvrage;
 import com.mars.library.model.Utilisateur;
@@ -9,8 +11,6 @@ import com.mars.library.repository.OuvrageRepository;
 import com.mars.library.repository.UtilisateurRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -25,12 +25,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmpruntService {
 
-@Autowired
-private SpringTemplateEngine springTemplateEngine;
+    @Autowired
+    private SpringTemplateEngine springTemplateEngine;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -97,6 +98,24 @@ private SpringTemplateEngine springTemplateEngine;
         empruntRepository.save(emprunt);
     }
 
+    public List<UtilisateurEnRetardDto> utilisateurEnRetard() {
+
+        return empruntRepository.findAllByStatusEnRetard().stream()
+                .collect(Collectors.groupingBy(emprunt -> emprunt.getUtilisateur()))
+                .entrySet().stream()
+                .map(e -> {
+                    UtilisateurEnRetardDto utilisateur = new UtilisateurEnRetardDto();
+                    utilisateur.setEmail(e.getKey().getEmail());
+                    utilisateur.setNom(e.getKey().getNom());
+                    List<LivreEnRetardDto> livres = e.getValue().stream().map(l -> new LivreEnRetardDto().setTitre(l.getOuvrage().getTitre())
+                            .setMaisonEdition(l.getOuvrage().getMaisonEdition())
+                            .setAuteur(l.getOuvrage().getAuteur().getPremon() + l.getOuvrage().getAuteur().getNom()))
+                            .collect(Collectors.toList());
+                    utilisateur.setLivresEnRetards(livres);
+                    return utilisateur;
+                }).collect(Collectors.toList());
+    }
+
     public void livreEnretard() throws MessagingException {
         List<Emprunt> empruntEnRetard = empruntRepository.findAllByStatusEnRetard();
         Map<Integer, List<Emprunt>> empruntsParUtilisateur = new HashMap<>();
@@ -109,7 +128,7 @@ private SpringTemplateEngine springTemplateEngine;
         }
 
         for (List<Emprunt> empruntsUnUtilisateur : empruntsParUtilisateur.values()) {
-Utilisateur utilisateur = empruntsUnUtilisateur.get(0).getUtilisateur();
+            Utilisateur utilisateur = empruntsUnUtilisateur.get(0).getUtilisateur();
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,
                     MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,

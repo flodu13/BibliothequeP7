@@ -1,56 +1,51 @@
 package com.mars.library.controller.dto;
 
 
-import javax.persistence.*;
 import java.util.List;
 
 
-public class LivresEnRetardDto {
+public class UtilisateurEnRetardDto {
 
-    private int id;
+
     private String nom;
     private String prenom;
     private String email;
 
-    private List<LivresEnRetardDto> livresEnRetards;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private List<LivreEnRetardDto> livresEnRetards;
 
     public String getNom() {
         return nom;
     }
 
-    public void setNom(String nom) {
+    public UtilisateurEnRetardDto setNom(String nom) {
         this.nom = nom;
+        return this;
     }
 
     public String getPrenom() {
         return prenom;
     }
 
-    public void setPrenom(String prenom) {
+    public UtilisateurEnRetardDto setPrenom(String prenom) {
         this.prenom = prenom;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public UtilisateurEnRetardDto setEmail(String email) {
         this.email = email;
+        return this;
     }
 
-    public List<LivresEnRetardDto> getLivresEnRetards() {
+    public List<LivreEnRetardDto> getLivresEnRetards() {
         return livresEnRetards;
     }
 
-    public void setLivresEnRetards(List<LivresEnRetardDto> livresEnRetards) {
+    public UtilisateurEnRetardDto setLivresEnRetards(List<LivreEnRetardDto> livresEnRetards) {
         this.livresEnRetards = livresEnRetards;
+        return this;
     }
 }
