@@ -5,6 +5,7 @@ import com.mars.library.business.EmpruntService;
 import com.mars.library.controller.dto.EmpruntDto;
 import com.mars.library.controller.dto.EmpruntOuvrageDto;
 import com.mars.library.controller.dto.OuvrageUtilisateurDto;
+import com.mars.library.controller.dto.UtilisateurEnRetardDto;
 import com.mars.library.controller.dto.mapper.EmpruntDtoMapper;
 import com.mars.library.model.Utilisateur;
 import com.mars.library.model.Emprunt;
@@ -46,15 +47,21 @@ public class EmpruntController {
         for (Emprunt emprunt : empruntService.empruntParUtilisateur(utilisateurConnecte.getId())) {
             empruntDtos.add(EmpruntDtoMapper.dtoWithOuvrage(emprunt, modelMapper));
         }
-        // TODO a supprimer
-        try {
-            empruntService.livreEnretard();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
+
         return empruntDtos;
     }
 
+@GetMapping("/utilisateurEnRetard")
+public List<UtilisateurEnRetardDto> utilisateurEnRetard(){
+return empruntService.utilisateurEnRetard();
+}
+
+/*
+@PostMapping("/utilisateurEnRetard")
+public void envoiMail (@RequestBody UtilisateurEnRetardDto utilisateurEnRetardDto) throws MessagingException {
+   empruntService.envoiMailEnRetard (utilisateurEnRetardDto);
+}
+*/
     @PostMapping()
     public EmpruntDto creation(Principal principal, @RequestBody OuvrageUtilisateurDto ouvrageUtilisateurDto) {
         Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();

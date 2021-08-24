@@ -11,12 +11,15 @@ import com.mars.library.repository.OuvrageRepository;
 import com.mars.library.repository.UtilisateurRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
@@ -24,12 +27,19 @@ import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class EmpruntService {
 
+    @Value("${spring.mail.username}")
+    private String from;
+
+
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
     @Autowired
     private SpringTemplateEngine springTemplateEngine;
 
@@ -41,6 +51,17 @@ public class EmpruntService {
     private OuvrageRepository ouvrageRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+
+    @PostConstruct
+    public void init() {
+        threadPoolTaskScheduler.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                envoidListEmailretard();
+            }
+            //calcul pour envoi 1 fois toute les 24 heures
+        }, 1000*60*60*24);
+    }
 
     public List<Emprunt> empruntParUtilisateur(Integer utilisateurId) {
         return empruntRepository.findAllByUtilisateurId(utilisateurId);
@@ -109,41 +130,38 @@ public class EmpruntService {
                     utilisateur.setNom(e.getKey().getNom());
                     List<LivreEnRetardDto> livres = e.getValue().stream().map(l -> new LivreEnRetardDto().setTitre(l.getOuvrage().getTitre())
                             .setMaisonEdition(l.getOuvrage().getMaisonEdition())
-                            .setAuteur(l.getOuvrage().getAuteur().getPremon() + l.getOuvrage().getAuteur().getNom()))
+                            .setDateRenduPrevu(l.getDateRenduPrevu())
+                            .setAuteur(l.getOuvrage().getAuteur().getPremon() + " " + l.getOuvrage().getAuteur().getNom()))
                             .collect(Collectors.toList());
                     utilisateur.setLivresEnRetards(livres);
                     return utilisateur;
                 }).collect(Collectors.toList());
     }
 
-    public void livreEnretard() throws MessagingException {
-        List<Emprunt> empruntEnRetard = empruntRepository.findAllByStatusEnRetard();
-        Map<Integer, List<Emprunt>> empruntsParUtilisateur = new HashMap<>();
-        for (Emprunt emprunt : empruntEnRetard) {
-            if (!empruntsParUtilisateur.containsKey(emprunt.getUtilisateur().getId())) {
-                empruntsParUtilisateur.put(emprunt.getUtilisateur().getId(), new ArrayList<>());
+    public void envoidListEmailretard() {
+        utilisateurEnRetard().forEach(this::envoiMailEnRetard);
+    }
 
-            }
-            empruntsParUtilisateur.get(emprunt.getUtilisateur().getId()).add(emprunt);
-        }
 
-        for (List<Emprunt> empruntsUnUtilisateur : empruntsParUtilisateur.values()) {
-            Utilisateur utilisateur = empruntsUnUtilisateur.get(0).getUtilisateur();
+    public void envoiMailEnRetard(UtilisateurEnRetardDto utilisateurEnRetardDto) {
+        try {
+
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,
                     MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
             Context context = new Context();
-            context.setVariable("name", utilisateur.getNom());
-            context.setVariable("emprunts", empruntsUnUtilisateur);
+            context.setVariable("name", utilisateurEnRetardDto.getNom());
+            context.setVariable("livres", utilisateurEnRetardDto.getLivresEnRetards());
 
             String html = springTemplateEngine.process("retard", context);
-            helper.setTo(utilisateur.getEmail());
+            helper.setTo(utilisateurEnRetardDto.getEmail());
             helper.setText(html, true);
             helper.setSubject("Vous avez du retard");
-            helper.setFrom("noreply@library.com");
+            helper.setFrom(from);
             emailSender.send(message);
-        }
+        } catch (MessagingException e) {
 
+        }
     }
 }

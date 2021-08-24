@@ -1,10 +1,13 @@
 package com.mars.library.controller.dto;
 
+import java.util.Date;
+
 public class LivreEnRetardDto {
 
     private String titre;
     private String auteur;
     private String maisonEdition;
+    private Date dateRenduPrevu;
 
     public String getTitre() {
         return titre;
@@ -12,6 +15,15 @@ public class LivreEnRetardDto {
 
     public LivreEnRetardDto setTitre(String titre) {
         this.titre = titre;
+        return this;
+    }
+
+    public Date getDateRenduPrevu() {
+        return dateRenduPrevu;
+    }
+
+    public LivreEnRetardDto setDateRenduPrevu(Date dateRenduPrevu) {
+        this.dateRenduPrevu = dateRenduPrevu;
         return this;
     }
 

@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            font-size: 48px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -18,8 +18,8 @@
 </p>
 <p> Vous avez des livres en retards. Voir liste ci-dessous.</p>
 <ul>
-    <li th:each="emprunt: ${emprunts}">
-        <span th:text="${emprunt.ouvrage.titre}"></span> <span th:text="${emprunt.ouvrage.auteur.prenom}"></span> <span th:text="${emprunt.ouvrage.auteur.nom}"></span> <span th:text="${emprunt.dateRenduPrevu}"></span>
+    <li th:each="livre: ${livres}">
+        <span th:text="${livre.titre}"></span> <span th:text="${livre.auteur}"></span> <span th:text="${livre.maisonEdition}"> <span th:text="${livre.dateRenduPrevu}" ></span>
 
     </li>
 
