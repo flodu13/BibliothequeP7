@@ -15,9 +15,6 @@ public class UtilisateurService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Utilisateur afficherUtilisateurParEmail(String email) {
-        return utilisateurRepository.findByEmail(email);
-    }
     public void creation(Utilisateur utilisateur) {
 
         utilisateur.setMotDePasse(passwordEncoder.encode(utilisateur.getMotDePasse()));

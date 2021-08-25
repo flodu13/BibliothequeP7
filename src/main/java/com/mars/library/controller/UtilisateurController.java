@@ -17,13 +17,6 @@ public class UtilisateurController {
  private UtilisateurService utilisateurService;
 
 
-    @GetMapping("/email/{email}")
-    public Utilisateur afficherUtilisateurParEmail(@PathVariable String email) {
-        return utilisateurService.afficherUtilisateurParEmail(email);
-
-    }
-
-
     @PostMapping("/creation")
     public ResponseEntity<Void> creation(@RequestBody Utilisateur utilisateur) {
         utilisateurService.creation(utilisateur);

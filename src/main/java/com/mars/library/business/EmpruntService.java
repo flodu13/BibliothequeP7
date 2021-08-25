@@ -70,14 +70,14 @@ public class EmpruntService {
 
     public Emprunt creation(OuvrageUtilisateurDto ouvrageUtilisateurDto, Utilisateur utilisateurConnecte) {
         Ouvrage ouvrage = ouvrageRepository.getOne(ouvrageUtilisateurDto.getOuvrageId());
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(utilisateurConnecte.getEmail());
+
         if (ouvrage.getNombreExemplaire() == 0) {
             throw new IllegalArgumentException("Aucun exemplaire disponible");
         }
         ouvrage.setNombreExemplaire(ouvrage.getNombreExemplaire() - 1);
         Emprunt emprunt = new Emprunt();
         emprunt.setOuvrage(ouvrage);
-        emprunt.setUtilisateur(utilisateur);
+        emprunt.setUtilisateur(utilisateurConnecte);
         emprunt.setProlongPret(false);
         emprunt.setDateEmprunt(new Date());
         emprunt.setDateRenduPrevu(Date.from(LocalDate.now().plusWeeks(4).atStartOfDay().toInstant(ZoneOffset.UTC)));
