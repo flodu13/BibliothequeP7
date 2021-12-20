@@ -12,5 +12,5 @@ Pour lancer l'application il faut exécuter la ligne de commande : ```java -Dspr
 
 ## Comptes usagers :     
 2 utilisateurs peuvent se connecter :  
-* login= Florent mot de passe=$2a$10$5Fz84nOqSte969IBf5iDU.FE7DqcB50XascRxDtYSdWVD//Mrida6
-* login= Serge mot de passe=$2a$10$VdWZvYM1mkoGBvZIvZde6.L4q3yf.IQJ4e2aR834mZbl6ofglRhrS
+* login= Florent mot de passe=serge13
+* login= Serge mot de passe=serge13
