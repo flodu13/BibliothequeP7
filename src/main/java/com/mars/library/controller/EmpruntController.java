@@ -56,12 +56,6 @@ public List<UtilisateurEnRetardDto> utilisateurEnRetard(){
 return empruntService.utilisateurEnRetard();
 }
 
-/*
-@PostMapping("/utilisateurEnRetard")
-public void envoiMail (@RequestBody UtilisateurEnRetardDto utilisateurEnRetardDto) throws MessagingException {
-   empruntService.envoiMailEnRetard (utilisateurEnRetardDto);
-}
-*/
     @PostMapping()
     public EmpruntDto creation(Principal principal, @RequestBody OuvrageUtilisateurDto ouvrageUtilisateurDto) {
         Utilisateur utilisateurConnecte = (Utilisateur) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
