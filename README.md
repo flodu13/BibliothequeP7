@@ -21,7 +21,7 @@ Pour lancer l'application il faut exécuter la ligne de commande : ```java -jar 
 * login= Florent mot de passe=serge13
 * login= Serge mot de passe=serge13
 
- ## Déploiement de la base de donnée 
+## Déploiement de la base de donnée 
 Le fichier data.sql est directement intégré dans l'application. Nous utilisons une base de donnée postgresql. Le fait d'intégrer directement le fichier permet de déployer le schéma de la base de donnée au démarrage de l'application grace aux dépendences : 
 <dependency>
             <groupId>org.postgresql</groupId>
@@ -34,3 +34,16 @@ Le fichier data.sql est directement intégré dans l'application. Nous utilisons
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
 </dependency>
+  
+## Déploiement dans TOMCAT
+* Placez-vous dans le répertoire webapps exemple C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps
+* Copier coller le fichier .jar
+Patientez quelques secondes puis l'application sera automatiquement déployé. 
+Le simple fait de copier le fichier .jar dans le répertoire webapps vaut pour installation de l'application. 
+  
+Par ailleurs pour choisir un port spécifique il faudra :
+* Aller sur le dossier conf ex C:\Program Files\Apache Software Foundation\Tomcat 9.0\conf
+* Ouvrir le fichier serveur.xml 
+* Modifier le port sur la ligne <Connector port="8080" protocol="HTTP/1.1"
+                                           connectionTimeout="20000"
+                                           redirectPort="8443" />
